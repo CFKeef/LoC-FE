@@ -1,17 +1,16 @@
 import { Link as ChakraLink, Text, Heading } from "@chakra-ui/react";
-import { Container } from "../components/Container";
 import { Main } from "../components/Main";
 import SearchBar from "../components/SearchBar";
-import { DarkModeSwitch } from "../components/DarkModeSwitch";
+import { Container } from "../components/Container";
 
 const Index = () => (
     <Container height="100vh">
-        <Heading fontSize="2vw">Library of Congress Image Search</Heading>
         <Main>
+            <Heading fontSize={["1rem", "2vw"]} textAlign={"center"}>
+                Library of Congress Image Search
+            </Heading>
             <SearchBar />
         </Main>
-        <Text>Scala Computing</Text>
-        <DarkModeSwitch />
     </Container>
 );
 

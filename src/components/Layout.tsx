@@ -22,13 +22,11 @@ const Layout: React.FunctionComponent<Props> = ({
                 />
             </Head>
             <Box
-                as={"main"}
                 display={"flex"}
                 justifyContent={"center"}
                 flexDirection={"column"}
                 alignItems={"center"}
-                m={["20px", "0"]}
-                maxW={"48rem"}
+                width="100%"
             >
                 {children}
             </Box>
