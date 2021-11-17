@@ -4,39 +4,34 @@ import Link from "next/link";
 import { Link as ChakraLink, Text } from "@chakra-ui/react";
 
 interface Props {
-    to: string;
-    text: string;
-    styles?: ChakraProps;
-    children?: React.ReactNode;
+	to: string;
+	text: string;
+	styles?: ChakraProps;
+	children?: React.ReactNode;
 }
 
 const Anchor: React.FunctionComponent<Props> = ({
-    to,
-    children,
-    text,
-    styles,
+	to,
+	children,
+	text,
+	styles,
 }) => {
-    return (
-        <Link href={to} passHref={true}>
-            <ChakraLink
-                {...styles}
-                display={"flex"}
-                justifyContent={"flex-start"}
-                flexDirection={"row"}
-                alignItems={"center"}
-            >
-                <Text
-                    as={"span"}
-                    fontSize={"md"}
-                    color={"gray.200"}
-                    minW={"12rem"}
-                >
-                    {text}
-                </Text>
-                {children}
-            </ChakraLink>
-        </Link>
-    );
+	return (
+		<Link href={to} passHref={true}>
+			<ChakraLink
+				{...styles}
+				display={"flex"}
+				justifyContent={"flex-start"}
+				flexDirection={"row"}
+				alignItems={"center"}
+			>
+				<Text as={"span"} fontSize={"md"}>
+					{text}
+				</Text>
+				{children}
+			</ChakraLink>
+		</Link>
+	);
 };
 
 export default Anchor;
