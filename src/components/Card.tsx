@@ -9,10 +9,12 @@ const Card: React.FunctionComponent<Item> = (props) => {
 
 	return (
 		<Grid
+			as={"li"}
 			borderRadius={8}
 			padding={".5rem"}
 			bg={"gray.100"}
-			gridTemplateRows={"2.5rem 1rem auto 2rem"}
+			gridTemplateRows={"repeat(4,auto)"}
+			rowGap={".5rem"}
 			justifyContent={"center"}
 			alignItems={"center"}
 			minH={"10rem"}
@@ -31,8 +33,8 @@ const Card: React.FunctionComponent<Item> = (props) => {
 					w={"100%"}
 				/>
 			) : (
-				<Flex justifyContent={"center"}>
-					<WarningIcon />
+				<Flex minh={80} justifyContent={"center"}>
+					<WarningIcon h={"auto"} maxH={"5rem"} w={"100%"} />
 				</Flex>
 			)}
 			<Anchor

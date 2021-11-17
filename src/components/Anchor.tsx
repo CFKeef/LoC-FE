@@ -10,25 +10,19 @@ interface Props {
 	children?: React.ReactNode;
 }
 
-const Anchor: React.FunctionComponent<Props> = ({
-	to,
-	children,
-	text,
-	styles,
-}) => {
+const Anchor: React.FunctionComponent<Props> = ({ to, text, styles }) => {
 	return (
 		<Link href={to} passHref={true}>
 			<ChakraLink
 				{...styles}
 				display={"flex"}
-				justifyContent={"flex-start"}
+				justifyContent={"center"}
 				flexDirection={"row"}
 				alignItems={"center"}
 			>
 				<Text as={"span"} fontSize={"md"}>
 					{text}
 				</Text>
-				{children}
 			</ChakraLink>
 		</Link>
 	);

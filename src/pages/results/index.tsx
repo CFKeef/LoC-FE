@@ -11,6 +11,11 @@ interface Props extends Response {
 	error?: { msg: string };
 }
 
+const getQueryPortionFromURL = (url: string) => {
+	const queryStart = url.indexOf("?");
+	return url.substring(queryStart);
+};
+
 const fetchSearchWithQuery = async (
 	query: string
 ): Promise<Response | null> => {
@@ -35,8 +40,7 @@ const Index: React.FunctionComponent<Props> = (props) => {
 	const handleFetchingPage = async (route: string) => {
 		setIsLoading(true);
 
-		const queryStart = route.indexOf("?");
-		const query = route.substring(queryStart);
+		const query = getQueryPortionFromURL(route);
 
 		const data = await fetchSearchWithQuery(query);
 
@@ -45,10 +49,15 @@ const Index: React.FunctionComponent<Props> = (props) => {
 	};
 
 	const handleRenderingCardList = () => {
+		if (data.results.length == 0) {
+			return <Text>No Results found :(</Text>;
+		}
+
 		return (
 			<Grid
+				as={"ul"}
 				w={"100%"}
-				justifyContent={"center"}
+				justifyContent={"space-between"}
 				templateRows={["repeat(auto,1fr)", "repeat(5, 1fr)"]}
 				templateColumns={[
 					"repeat(auto-fit,40%)",
@@ -91,13 +100,23 @@ const Index: React.FunctionComponent<Props> = (props) => {
 					<Flex
 						m={"1rem 0"}
 						w={"50%"}
-						justifyContent={"center"}
-						gap={5}
+						justifyContent={"space-evenly"}
+						gap={"1rem"}
 						flexDirection={"row"}
 					>
-						{data.pagination.previous && <Button>Prev</Button>}
+						{data.pagination.previous && (
+							<Button
+								w={"30%"}
+								onClick={() =>
+									handleFetchingPage(data.pagination.previous)
+								}
+							>
+								Prev
+							</Button>
+						)}
 						{data.pagination.next && (
 							<Button
+								w={"30%"}
 								onClick={() =>
 									handleFetchingPage(data.pagination.next)
 								}
@@ -117,8 +136,7 @@ export default Index;
 export const getServerSideProps = async (
 	context: GetServerSidePropsContext
 ) => {
-	const queryStart = context.resolvedUrl.indexOf("?");
-	const query = context.resolvedUrl.slice(queryStart);
+	const query = getQueryPortionFromURL(context.resolvedUrl);
 
 	if (!query) {
 		return {
