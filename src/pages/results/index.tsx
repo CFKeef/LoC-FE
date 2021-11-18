@@ -71,8 +71,9 @@ const Index: React.FunctionComponent<Props> = (props) => {
     const determineRender = () => {
         if (error) return <Text>{error.msg}</Text>;
 
-        if (!data || data.results.length == 0)
+        if (!data || data.results.length == 0) {
             return <Text>No Results found :(</Text>;
+        }
 
         return (
             <>
