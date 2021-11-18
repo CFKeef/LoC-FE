@@ -5,15 +5,17 @@ import { Text, Heading, Flex, Grid, Button, Spinner } from "@chakra-ui/react";
 import Anchor from "../../components/Anchor";
 import { GetServerSidePropsContext } from "next";
 import Card from "../../components/Card";
-import { Response } from "../../types";
+import { Error, Response } from "../../types";
 
 interface Props extends Response {
-    error?: { msg: string };
+    error?: Error;
 }
 
 const getQueryPortionFromURL = (url: string) => {
     const queryStart = url.indexOf("?");
-    return url.substring(queryStart);
+
+    if (queryStart != -1) url.substring(queryStart);
+    return url;
 };
 
 const fetchSearchWithQuery = async (
@@ -21,9 +23,6 @@ const fetchSearchWithQuery = async (
 ): Promise<Response | null> => {
     return await fetch("http://18.233.199.112:80/api/v1/search" + query)
         .then((res) => {
-            if (!res.ok) {
-                throw new Error(res.statusText);
-            }
             return res.json() as Promise<Response>;
         })
         .catch((err) => {
@@ -35,20 +34,28 @@ const fetchSearchWithQuery = async (
 const Index: React.FunctionComponent<Props> = (props) => {
     const { pagination, results, error } = props;
     const [data, setData] = useState<Response>({ pagination, results });
+    const [err, setErr] = useState<Error>(error);
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleFetchingPage = async (route: string) => {
         setIsLoading(true);
-
         const query = getQueryPortionFromURL(route);
 
         const data = await fetchSearchWithQuery(query);
-
         setIsLoading(false);
-        setData(data);
+
+        if (!data) {
+            setErr({
+                message: "Something went wrong :(",
+                code: "server_blewup",
+            });
+        } else if (data.error) setErr(data.error);
+        else setData(data);
     };
 
     const handleRenderingCardList = () => {
+        if (data.results.length == 0) return <Text>No Results found :(</Text>;
+
         return (
             <Grid
                 as={"ul"}
@@ -69,11 +76,7 @@ const Index: React.FunctionComponent<Props> = (props) => {
     };
 
     const determineRender = () => {
-        if (error) return <Text>{error.msg}</Text>;
-
-        if (!data || data.results.length == 0) {
-            return <Text>No Results found :(</Text>;
-        }
+        if (err) return <Text>{err.message}</Text>;
 
         return (
             <>
@@ -142,7 +145,9 @@ export default Index;
 export const getServerSideProps = async (
     context: GetServerSidePropsContext,
 ) => {
-    const query = getQueryPortionFromURL(context.resolvedUrl);
+    const query = new URLSearchParams(
+        context.query as Record<string, string>,
+    ).toString();
 
     if (!query) {
         return {
@@ -153,14 +158,14 @@ export const getServerSideProps = async (
         };
     }
 
-    const data = await fetchSearchWithQuery(query);
+    const data = await fetchSearchWithQuery("?" + query);
 
     if (!data) {
         return {
             props: {
                 pagination: {},
                 results: [],
-                error: { msg: "Something went wrong :(" },
+                error: { message: "Something went wrong :(" },
             },
         };
     }
