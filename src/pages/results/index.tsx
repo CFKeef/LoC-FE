@@ -19,7 +19,7 @@ const getQueryPortionFromURL = (url: string) => {
 const fetchSearchWithQuery = async (
     query: string,
 ): Promise<Response | null> => {
-    return await fetch(process.env.IP + "/api/v1/search" + query)
+    return await fetch("http://18.233.199.112:80/api/v1/search" + query)
         .then((res) => {
             if (!res.ok) {
                 throw new Error(res.statusText);
@@ -49,10 +49,6 @@ const Index: React.FunctionComponent<Props> = (props) => {
     };
 
     const handleRenderingCardList = () => {
-        if (data.results.length == 0) {
-            return <Text>No Results found :(</Text>;
-        }
-
         return (
             <Grid
                 as={"ul"}
@@ -73,48 +69,49 @@ const Index: React.FunctionComponent<Props> = (props) => {
     };
 
     const determineRender = () => {
-        if (isLoading) return <Spinner />;
-        else if (error) return <Text>{error.msg}</Text>;
-        else {
-            return (
-                <>
-                    {handleRenderingCardList()}
-                    <Flex
-                        m={"1rem 0"}
-                        w={"50%"}
-                        justifyContent={"space-evenly"}
-                        gap={"1rem"}
-                        flexDirection={"row"}
-                    >
-                        {data.pagination.previous && (
-                            <Button
-                                w={"30%"}
-                                onClick={() =>
-                                    handleFetchingPage(data.pagination.previous)
-                                }
-                            >
-                                Prev
-                            </Button>
-                        )}
-                        {data.pagination.next && (
-                            <Button
-                                w={"30%"}
-                                onClick={() =>
-                                    handleFetchingPage(data.pagination.next)
-                                }
-                            >
-                                Next
-                            </Button>
-                        )}
-                    </Flex>
-                </>
-            );
-        }
+        if (error) return <Text>{error.msg}</Text>;
+
+        if (!data || data.results.length == 0)
+            return <Text>No Results found :(</Text>;
+
+        return (
+            <>
+                {handleRenderingCardList()}
+                <Flex
+                    m={"1rem 0"}
+                    w={"50%"}
+                    justifyContent={"space-evenly"}
+                    gap={"1rem"}
+                    flexDirection={"row"}
+                >
+                    {data.pagination.previous && (
+                        <Button
+                            w={"30%"}
+                            onClick={() =>
+                                handleFetchingPage(data.pagination.previous)
+                            }
+                        >
+                            Prev
+                        </Button>
+                    )}
+                    {data.pagination.next && (
+                        <Button
+                            w={"30%"}
+                            onClick={() =>
+                                handleFetchingPage(data.pagination.next)
+                            }
+                        >
+                            Next
+                        </Button>
+                    )}
+                </Flex>
+            </>
+        );
     };
 
     return (
         <Layout title={"Results for your search"}>
-            <Main>
+            <Main m={"0 0 1rem 0"}>
                 <Flex
                     m={"1rem 0"}
                     flexDirection={"row"}
@@ -133,7 +130,7 @@ const Index: React.FunctionComponent<Props> = (props) => {
                         />
                     </Flex>
                 </Flex>
-                {determineRender()}
+                {!data || isLoading ? <Spinner /> : determineRender()}
             </Main>
         </Layout>
     );
