@@ -38,8 +38,7 @@ const Index: React.FunctionComponent<Props> = (props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleFetchingPage = async (route: string) => {
-        setIsLoading(true);
-        const query = getQueryPortionFromURL(route);
+        const query = route.substring(route.indexOf("?"));
 
         const data = await fetchSearchWithQuery(query);
         setIsLoading(false);
