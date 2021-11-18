@@ -11,13 +11,6 @@ interface Props extends Response {
     error?: Error;
 }
 
-const getQueryPortionFromURL = (url: string) => {
-    const queryStart = url.indexOf("?");
-
-    if (queryStart != -1) url.substring(queryStart);
-    return url;
-};
-
 const fetchSearchWithQuery = async (
     query: string,
 ): Promise<Response | null> => {
@@ -38,9 +31,17 @@ const Index: React.FunctionComponent<Props> = (props) => {
     const [isLoading, setIsLoading] = useState<boolean>(false);
 
     const handleFetchingPage = async (route: string) => {
-        const query = route.substring(route.indexOf("?"));
+        setIsLoading(true);
 
-        const data = await fetchSearchWithQuery(query);
+        const data = await fetch(route)
+            .then((res) => {
+                return res.json() as Promise<Response>;
+            })
+            .catch((err) => {
+                console.error(err);
+                return null;
+            });
+
         setIsLoading(false);
 
         if (!data) {
